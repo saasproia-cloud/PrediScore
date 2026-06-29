@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   BarChart3,
   Trophy,
@@ -39,6 +40,15 @@ const NAV = [
   { href: "/app/subscription", label: "Abonnement", icon: CreditCard },
   { href: "/app/settings", label: "Paramètres", icon: Settings },
 ];
+
+function RouteProgress({ show }: { show: boolean }) {
+  if (!show) return null;
+  return (
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-[80] h-0.5 overflow-hidden bg-white/[0.06]">
+      <div className="animate-route-progress h-full w-1/3 rounded-full bg-brand-gradient shadow-[0_0_18px_hsl(var(--primary)/0.65)]" />
+    </div>
+  );
+}
 
 function Brand() {
   return (
@@ -142,11 +152,17 @@ function QuotaBox({ account }: { account: SidebarAccount }) {
 
 export function Sidebar({ account }: { account: SidebarAccount }) {
   const pathname = usePathname();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const isActive = (href: string) =>
     href === "/app" ? pathname === "/app" : pathname.startsWith(href);
 
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
+
   return (
     <aside className="sticky top-0 z-20 hidden h-dvh w-[292px] shrink-0 flex-col gap-5 border-r border-white/10 bg-[linear-gradient(180deg,hsl(166_38%_7%/0.92),hsl(158_46%_6%/0.88))] p-4 shadow-[24px_0_70px_rgb(0_0_0/0.18)] backdrop-blur-2xl lg:flex">
+      <RouteProgress show={Boolean(pendingHref)} />
       <div className="pt-1">
         <Brand />
       </div>
@@ -164,17 +180,22 @@ export function Sidebar({ account }: { account: SidebarAccount }) {
         {NAV.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
+          const pending = pendingHref === item.href && !active;
           return (
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setPendingHref(active ? null : item.href)}
               className={cn(
-                "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition",
+                "group relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2.5 text-sm font-semibold transition",
                 active
                   ? "bg-[linear-gradient(90deg,hsl(var(--primary)/0.17),hsl(var(--gold)/0.055))] text-foreground ring-1 ring-primary/25"
                   : "text-muted-foreground hover:bg-white/[0.045] hover:text-foreground",
               )}
             >
+              {pending && (
+                <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.12),transparent)] animate-soft-sweep" />
+              )}
               {active && <span className="absolute left-0 top-2 h-7 w-1 rounded-r-full bg-primary" />}
               <span className={cn("flex h-8 w-8 items-center justify-center rounded-lg transition", active ? "bg-primary/[0.18] text-primary" : "bg-white/[0.035] text-muted-foreground group-hover:text-foreground")}>
                 <Icon className="h-4 w-4" />
@@ -205,6 +226,7 @@ export function Sidebar({ account }: { account: SidebarAccount }) {
 
 export function MobileNav() {
   const pathname = usePathname();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const isActive = (href: string) =>
     href === "/app" ? pathname === "/app" : pathname.startsWith(href);
   const items = NAV.filter((item) =>
@@ -217,20 +239,30 @@ export function MobileNav() {
     "/app/subscription": "Plan",
     "/app/settings": "Réglages",
   };
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
+
   return (
     <nav className="fixed inset-x-3 bottom-[calc(0.7rem+env(safe-area-inset-bottom))] z-40 grid grid-cols-5 rounded-2xl border border-white/[0.12] bg-[hsl(var(--background)/0.88)] p-1.5 shadow-[0_20px_70px_rgb(0_0_0/0.38)] backdrop-blur-2xl lg:hidden">
+      <RouteProgress show={Boolean(pendingHref)} />
       {items.map((item) => {
         const Icon = item.icon;
         const active = isActive(item.href);
+        const pending = pendingHref === item.href && !active;
         return (
           <Link
             key={item.href}
             href={item.href}
+            onClick={() => setPendingHref(active ? null : item.href)}
             className={cn(
-              "flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 text-[9px] font-semibold transition",
+              "relative flex min-w-0 flex-col items-center gap-1 overflow-hidden rounded-xl px-1 py-1.5 text-[9px] font-semibold transition",
               active ? "bg-primary/[0.14] text-primary ring-1 ring-primary/20" : "text-muted-foreground",
             )}
           >
+            {pending && (
+              <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.14),transparent)] animate-soft-sweep" />
+            )}
             <Icon className="h-5 w-5" />
             <span className="max-w-full truncate">{mobileLabels[item.href] ?? item.label}</span>
           </Link>

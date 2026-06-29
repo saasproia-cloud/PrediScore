@@ -319,6 +319,16 @@ body {
   .app-page-enter {
     animation: app-page-enter 280ms ease both;
   }
+
+  .animate-route-progress {
+    animation: route-progress 760ms ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .animate-soft-sweep {
+    animation: soft-sweep 900ms ease-in-out infinite;
+    will-change: transform;
+  }
 }
 
 @keyframes app-page-enter {
@@ -329,5 +339,23 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes route-progress {
+  0% {
+    transform: translateX(-130%);
+  }
+  100% {
+    transform: translateX(330%);
+  }
+}
+
+@keyframes soft-sweep {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(110%);
   }
 }
