@@ -18,4 +18,4 @@ export const SITE_NAME = "PrediScore";
 
 // Microsoft Clarity : heatmaps + enregistrements de sessions. Identifiant court
 // alphanumérique (Settings → Overview, ou dans le snippet d'installation).
-export const CLARITY_ID = "xb0rrc852h";
+export const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || "xengydmkc";
