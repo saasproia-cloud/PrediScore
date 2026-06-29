@@ -45,10 +45,10 @@ function Brand() {
     <Link href="/app" className="group app-panel flex items-center gap-3 rounded-lg px-3 py-3 transition">
       <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-black/[0.28] ring-1 ring-white/[0.12]">
         <Image
-          src="/prediscore-mark.png"
+          src="/brand/prediscore-mark-transparent-trimmed.png"
           alt=""
-          width={48}
-          height={48}
+          width={184}
+          height={179}
           className="h-10 w-10 object-contain drop-shadow-[0_0_14px_hsl(var(--primary)/0.35)]"
         />
       </span>

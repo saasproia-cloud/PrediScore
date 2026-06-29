@@ -62,7 +62,7 @@ export function PhoneMockup() {
           {/* barre app */}
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <Image src="/prediscore-mark.png" alt="" width={22} height={22} className="h-5 w-5 object-contain" />
+              <Image src="/brand/prediscore-mark-transparent-trimmed.png" alt="" width={22} height={22} className="h-5 w-5 object-contain" />
               <span className="text-sm font-bold">PrediScore</span>
             </div>
             <div className="rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[9px] font-bold text-primary">

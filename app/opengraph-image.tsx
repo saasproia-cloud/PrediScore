@@ -48,7 +48,7 @@ export default function OpengraphImage() {
               display: "flex",
             }}
           />
-          PrediScore.fr
+          PrediScore.io
         </div>
 
         <div
@@ -61,8 +61,8 @@ export default function OpengraphImage() {
             lineHeight: 1,
           }}
         >
-          <span>Vision</span>
-          <span style={{ color: EMERALD }}>11</span>
+          <span>Predi</span>
+          <span style={{ color: EMERALD }}>Score</span>
         </div>
 
         <div
