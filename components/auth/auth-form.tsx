@@ -15,6 +15,12 @@ type Mode = "signup" | "login";
 // Mode mock (Supabase non configuré) : email fictif pour Google.
 const GOOGLE_MOCK_EMAIL = "joueur.google@gmail.com";
 
+function getPublicOrigin() {
+  const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configuredOrigin) return configuredOrigin.replace(/\/$/, "");
+  return window.location.origin;
+}
+
 function frenchAuthError(message: string): string {
   const m = message.toLowerCase();
   if (m.includes("already registered") || m.includes("already been registered"))
@@ -118,7 +124,7 @@ export function AuthForm({ redirectTo = "/app" }: { redirectTo?: string }) {
     const client = getSupabaseBrowserClient();
     if (!client) return;
     setPending(true);
-    const callback = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+    const callback = `${getPublicOrigin()}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
     const { error: err } = await client.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: callback },

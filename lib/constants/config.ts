@@ -1,9 +1,12 @@
 // Réglages produit centralisés.
 
 // Domaine de production. Base de TOUTES les URLs absolues (SEO, sitemap, image
-// de partage Open Graph, données structurées). Un seul endroit à changer si le
-// domaine évolue.
-export const SITE_URL = "https://prediscore.fr";
+// de partage Open Graph, données structurées). En production Vercel, renseigner
+// NEXT_PUBLIC_SITE_URL=https://prediscore.fr pour figer aussi les callbacks OAuth.
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://prediscore.fr").replace(
+  /\/$/,
+  "",
+);
 
 // Nom de marque affiché. Les URLs restent en minuscules (`prediscore.fr`).
 export const SITE_NAME = "PrediScore";
