@@ -2,13 +2,13 @@
 
 // Domaine de production. Base de TOUTES les URLs absolues (SEO, sitemap, image
 // de partage Open Graph, données structurées). En production Vercel, renseigner
-// NEXT_PUBLIC_SITE_URL=https://prediscore.fr pour figer aussi les callbacks OAuth.
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://prediscore.fr").replace(
+// NEXT_PUBLIC_SITE_URL=https://prediscore.io pour figer aussi les callbacks OAuth.
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://prediscore.io").replace(
   /\/$/,
   "",
 );
 
-// Nom de marque affiché. Les URLs restent en minuscules (`prediscore.fr`).
+// Nom de marque affiché. Les URLs restent en minuscules (`prediscore.io`).
 export const SITE_NAME = "PrediScore";
 
 // --- Mesure d'audience (analytics) ---
