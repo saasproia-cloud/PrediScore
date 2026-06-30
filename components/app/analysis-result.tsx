@@ -43,6 +43,40 @@ function Logo({ team, size = 40 }: { team: TeamRef; size?: number }) {
   );
 }
 
+const COUNTRY_FLAGS: Record<string, string> = {
+  france: "🇫🇷",
+  england: "🏴",
+  spain: "🇪🇸",
+  germany: "🇩🇪",
+  italy: "🇮🇹",
+  portugal: "🇵🇹",
+  morocco: "🇲🇦",
+  netherlands: "🇳🇱",
+  belgium: "🇧🇪",
+  brazil: "🇧🇷",
+  argentina: "🇦🇷",
+  norway: "🇳🇴",
+  sweden: "🇸🇪",
+  denmark: "🇩🇰",
+  turkey: "🇹🇷",
+  türkiye: "🇹🇷",
+  usa: "🇺🇸",
+  "united states": "🇺🇸",
+  japan: "🇯🇵",
+  mexico: "🇲🇽",
+  canada: "🇨🇦",
+  switzerland: "🇨🇭",
+  austria: "🇦🇹",
+  scotland: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  wales: "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+  ireland: "🇮🇪",
+};
+
+function countryFlag(country?: string) {
+  if (!country) return null;
+  return COUNTRY_FLAGS[country.trim().toLowerCase()] ?? null;
+}
+
 function SectionTitle({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -304,48 +338,113 @@ function FullAnalysis({
     p.confidence.score >= 64 ? "text-primary" : p.confidence.score >= 42 ? "text-gold" : "text-rose-400";
   const winnerTeam =
     p.winner.key === "home" ? teams.home : p.winner.key === "away" ? teams.away : null;
+  const loserTeam =
+    p.winner.key === "home" ? teams.away : p.winner.key === "away" ? teams.home : null;
+  const winnerName = winnerTeam?.name ?? "Match nul";
+  const winnerFlag = winnerTeam ? countryFlag(winnerTeam.country) : null;
+  const favoriteAngle = Math.round(p.winner.probability * 360);
+  const likelyScore = p.markets.mostLikelyScore;
 
   return (
     <div className="space-y-5">
-      {/* Verdict principal */}
-      <motion.div variants={fade} custom={0} initial="hidden" animate="show" className="app-panel relative overflow-hidden rounded-lg p-4 sm:p-5">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-gold/[0.12] blur-3xl" />
-        <div className="mb-4 flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
-          <Sparkles className="h-3.5 w-3.5 text-primary" />
-          Analyse complète · IA PrediScore
-        </div>
-        <div className="relative grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
-          <div className="min-w-0">
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-              Pronostic principal
+      {/* Verdict principal : vainqueur d'abord, score ensuite. */}
+      <motion.div
+        variants={fade}
+        custom={0}
+        initial="hidden"
+        animate="show"
+        className="app-panel relative overflow-hidden rounded-lg p-4 sm:p-6"
+      >
+        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-gold/[0.14] blur-3xl" />
+        <div className="pointer-events-none absolute -left-24 bottom-0 h-56 w-56 rounded-full bg-primary/[0.16] blur-3xl" />
+        <div className="relative">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold/25 bg-gold/[0.08] px-3 py-1 text-xs font-bold text-gold-soft">
+              <Sparkles className="h-3.5 w-3.5" />
+              Verdict IA
             </div>
-            <div className="mt-3 flex min-w-0 items-center gap-3">
-              {winnerTeam ? (
-                <Logo team={winnerTeam} size={54} />
-              ) : (
-                <div className="flex h-[54px] w-[54px] items-center justify-center rounded-full border border-border bg-background/50 text-lg font-black">
-                  N
+            <div className="flex min-w-0 items-center gap-2 rounded-full border border-white/10 bg-black/[0.18] px-3 py-1.5 text-xs text-muted-foreground">
+              <Logo team={teams.home} size={20} />
+              <span className="max-w-[110px] truncate sm:max-w-[180px]">{teams.home.name}</span>
+              <span className="text-white/35">vs</span>
+              <Logo team={teams.away} size={20} />
+              <span className="max-w-[110px] truncate sm:max-w-[180px]">{teams.away.name}</span>
+            </div>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="min-w-0">
+              <div className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">
+                {winnerTeam ? "Vainqueur probable" : "Issue la plus probable"}
+              </div>
+              <div className="mt-3 flex min-w-0 items-center gap-4">
+                <div
+                  className="relative flex h-28 w-28 shrink-0 items-center justify-center rounded-full p-2 shadow-[0_0_42px_hsl(var(--primary)/0.20)]"
+                  style={{
+                    background: `conic-gradient(hsl(var(--primary)) ${favoriteAngle}deg, hsl(var(--muted)) 0deg)`,
+                  }}
+                >
+                  <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-background text-center ring-1 ring-white/10">
+                    {winnerTeam ? (
+                      <Logo team={winnerTeam} size={34} />
+                    ) : (
+                      <span className="text-lg font-black text-gold">N</span>
+                    )}
+                    <span className="mt-1 text-xl font-black text-brand-soft">{f(p.winner.probability)}</span>
+                  </div>
                 </div>
-              )}
-              <div className="min-w-0">
-                <div className="truncate text-2xl font-extrabold tracking-tight text-brand-soft sm:text-3xl">
-                  {p.winner.label}
-                </div>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  {f(p.winner.probability)} de probabilité · avance {f(p.winner.margin)}
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex min-w-0 items-center gap-2">
+                    {winnerFlag && <span className="text-2xl">{winnerFlag}</span>}
+                    <h2 className="truncate text-3xl font-black uppercase leading-none tracking-tight text-brand-soft sm:text-5xl">
+                      {winnerName}
+                    </h2>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                    {loserTeam && (
+                      <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1">
+                        devant {countryFlag(loserTeam.country)} {loserTeam.name}
+                      </span>
+                    )}
+                    <span className="rounded-full border border-primary/25 bg-primary/[0.08] px-2.5 py-1 text-primary">
+                      +{f(p.winner.margin)} d'avance
+                    </span>
+                    <span className={cn("rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1", confColor)}>
+                      confiance {p.confidence.score}/100
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-black/[0.18] p-3 text-center">
-            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-              Score possible
-            </div>
-            <div className="mt-1 text-3xl font-extrabold tracking-tight text-foreground">
-              {p.markets.mostLikelyScore.home}–{p.markets.mostLikelyScore.away}
-            </div>
-            <div className="mt-1 text-[11px] text-muted-foreground">
-              {teams.home.name} vs {teams.away.name}
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="rounded-lg border border-gold/20 bg-[linear-gradient(145deg,hsl(var(--gold)/0.12),hsl(var(--card)/0.72))] p-4 text-center">
+                <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-gold-soft">
+                  Score possible
+                </div>
+                <div className="mt-2 flex items-center justify-center gap-3">
+                  <Logo team={teams.home} size={34} />
+                  <div className="text-4xl font-black tracking-tight text-foreground sm:text-5xl">
+                    {likelyScore.home}<span className="mx-1 text-muted-foreground">-</span>{likelyScore.away}
+                  </div>
+                  <Logo team={teams.away} size={34} />
+                </div>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {teams.home.name} - {teams.away.name}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-white/10 bg-black/[0.16] p-4">
+                <div className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted-foreground">
+                  Lecture rapide
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <MiniStat label="1" value={f(o.home)} active={p.winner.key === "home"} />
+                  <MiniStat label="N" value={f(o.draw)} active={p.winner.key === "draw"} />
+                  <MiniStat label="2" value={f(o.away)} active={p.winner.key === "away"} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -353,17 +452,21 @@ function FullAnalysis({
 
       {/* Issue 1-N-2 */}
       <motion.div variants={fade} custom={1} initial="hidden" animate="show" className="app-panel-muted rounded-lg p-4 sm:p-5">
-        <SectionTitle icon={<TrendingUp className="h-4 w-4" />}>Probabilités du résultat</SectionTitle>
-        <div className="grid grid-cols-3 gap-2 text-center sm:gap-3">
+        <SectionTitle icon={<TrendingUp className="h-4 w-4" />}>Graphique 1-N-2</SectionTitle>
+        <div className="grid gap-2 sm:grid-cols-3 sm:gap-3">
           {[
-            { label: teams.home.name, v: o.home, key: "h" },
-            { label: "Match nul", v: o.draw, key: "d" },
-            { label: teams.away.name, v: o.away, key: "a" },
+            { label: teams.home.name, v: o.home, key: "home" as const, team: teams.home, tag: "Victoire" },
+            { label: "Match nul", v: o.draw, key: "draw" as const, team: null, tag: "Nul" },
+            { label: teams.away.name, v: o.away, key: "away" as const, team: teams.away, tag: "Victoire" },
           ].map((x) => (
-            <div key={x.key} className="rounded-lg bg-background/50 p-2.5 sm:p-3">
-              <div className="text-xl font-bold text-brand-soft sm:text-2xl">{f(x.v)}</div>
-              <div className="mt-1 truncate text-xs text-muted-foreground">{x.label}</div>
-            </div>
+            <ProbabilityCard
+              key={x.key}
+              label={x.label}
+              tag={x.tag}
+              value={x.v}
+              team={x.team}
+              active={p.winner.key === x.key}
+            />
           ))}
         </div>
         <div className="mt-3 flex h-2.5 overflow-hidden rounded-full bg-muted">
@@ -409,8 +512,13 @@ function FullAnalysis({
 
       {/* Scénario IA */}
       <motion.div variants={fade} custom={3} initial="hidden" animate="show" className="app-panel rounded-lg p-4 sm:p-5">
-        <SectionTitle icon={<Activity className="h-4 w-4" />}>Scénario du match</SectionTitle>
-        <p className="text-sm leading-relaxed text-foreground/90">{narrative.scenario}</p>
+        <SectionTitle icon={<Activity className="h-4 w-4" />}>Résumé IA</SectionTitle>
+        {narrative.verdict && (
+          <div className="mb-3 rounded-lg border border-primary/20 bg-primary/[0.08] px-3 py-2 text-sm font-extrabold text-brand-soft">
+            {narrative.verdict}
+          </div>
+        )}
+        <p className="text-sm leading-relaxed text-foreground/80">{narrative.scenario}</p>
         <ul className="mt-4 grid gap-2 sm:grid-cols-2">
           {narrative.keyFactors.map((k, i) => (
             <li key={i} className="flex items-start gap-2 rounded-lg bg-background/40 p-2.5 text-xs text-foreground/[0.85]">
@@ -514,6 +622,79 @@ function FullAnalysis({
         </MarketCard>
       </div>
 
+    </div>
+  );
+}
+
+function MiniStat({ label, value, active }: { label: string; value: string; active: boolean }) {
+  return (
+    <div
+      className={cn(
+        "rounded-lg border p-2",
+        active
+          ? "border-primary/35 bg-primary/[0.13] text-primary"
+          : "border-white/10 bg-white/[0.035] text-muted-foreground",
+      )}
+    >
+      <div className="text-[10px] font-black uppercase">{label}</div>
+      <div className="mt-0.5 text-lg font-black text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function ProbabilityCard({
+  label,
+  tag,
+  value,
+  team,
+  active,
+}: {
+  label: string;
+  tag: string;
+  value: number;
+  team: TeamRef | null;
+  active: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-lg border p-3 transition",
+        active
+          ? "border-primary/40 bg-[radial-gradient(circle_at_20%_0%,hsl(var(--primary)/0.18),transparent_48%),hsl(var(--primary)/0.07)] shadow-[0_18px_46px_hsl(var(--primary)/0.11)]"
+          : "border-white/10 bg-background/45",
+      )}
+    >
+      <div className="mb-3 flex items-center gap-2">
+        {team ? (
+          <Logo team={team} size={30} />
+        ) : (
+          <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-gold/15 text-xs font-black text-gold">
+            N
+          </div>
+        )}
+        <div className="min-w-0">
+          <div className="truncate text-sm font-bold text-foreground">{label}</div>
+          <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            {team ? `${countryFlag(team.country) ?? ""} ${tag}` : tag}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-end justify-between gap-3">
+        <div className="text-3xl font-black tracking-tight text-brand-soft">{f(value)}</div>
+        {active && (
+          <div className="rounded-full border border-primary/30 bg-primary/[0.12] px-2 py-0.5 text-[10px] font-bold uppercase text-primary">
+            favori
+          </div>
+        )}
+      </div>
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${Math.max(3, value * 100)}%` }}
+          transition={{ duration: 0.7 }}
+          className={cn("h-full rounded-full", active ? "bg-brand-gradient" : "bg-white/35")}
+        />
+      </div>
     </div>
   );
 }
