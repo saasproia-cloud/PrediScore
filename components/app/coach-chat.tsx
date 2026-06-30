@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Send, Loader2, MessageSquare, Sparkles } from "lucide-react";
 
 interface Msg {
@@ -25,8 +26,10 @@ export function CoachChat({
   perDay: number | null;
   used: number;
 }) {
+  const searchParams = useSearchParams();
+  const initialQuestion = searchParams.get("question") ?? "";
   const [messages, setMessages] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialQuestion);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [quotaUsed, setQuotaUsed] = useState(used);

@@ -344,6 +344,8 @@ function FullAnalysis({
   const winnerFlag = winnerTeam ? countryFlag(winnerTeam.country) : null;
   const favoriteAngle = Math.round(p.winner.probability * 360);
   const likelyScore = p.markets.mostLikelyScore;
+  const scorerQuestion = `Sur le match ${teams.home.name} - ${teams.away.name}, qui est le buteur le plus probable ? Donne un seul nom principal, 2 alternatives et une jauge de confiance.`;
+  const scorerHref = `/app/coach?question=${encodeURIComponent(scorerQuestion)}`;
 
   return (
     <div className="space-y-5">
@@ -476,8 +478,41 @@ function FullAnalysis({
         </div>
       </motion.div>
 
+      {/* Buteur : teaser qui envoie vers le Coach IA. */}
+      <motion.div variants={fade} custom={2} initial="hidden" animate="show" className="app-panel relative overflow-hidden rounded-lg p-4 sm:p-5">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-gold/[0.16] blur-3xl" />
+        <div className="relative grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
+          <div className="min-w-0">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-gold/25 bg-gold/[0.08] px-3 py-1 text-xs font-bold text-gold-soft">
+              <Target className="h-3.5 w-3.5" />
+              Buteur probable
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black/[0.25]">
+                <span className="text-lg font-black text-brand-soft blur-[5px]">9</span>
+                <Lock className="absolute h-4 w-4 text-gold" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="truncate text-xl font-extrabold text-foreground">
+                  Qui peut marquer dans ce match ?
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Le Coach IA te donne le nom principal, les alternatives et la confiance.
+                </p>
+              </div>
+            </div>
+          </div>
+          <Link
+            href={scorerHref}
+            className="flex h-11 items-center justify-center gap-2 rounded-lg bg-brand-gradient px-5 text-sm font-extrabold text-primary-foreground shadow-[0_14px_38px_hsl(var(--primary)/0.18)] transition hover:scale-[1.01] hover:opacity-95"
+          >
+            Demander au Coach <MessageSquare className="h-4 w-4" />
+          </Link>
+        </div>
+      </motion.div>
+
       {/* Confiance + buts attendus */}
-      <motion.div variants={fade} custom={2} initial="hidden" animate="show" className="grid gap-4 sm:grid-cols-2">
+      <motion.div variants={fade} custom={3} initial="hidden" animate="show" className="grid gap-4 sm:grid-cols-2">
         <div className="app-panel-muted rounded-lg p-4 sm:p-5">
           <SectionTitle icon={<ShieldCheck className="h-4 w-4" />}>Confiance de l'IA</SectionTitle>
           <div className="flex items-baseline gap-2">
@@ -511,7 +546,7 @@ function FullAnalysis({
       </motion.div>
 
       {/* Scénario IA */}
-      <motion.div variants={fade} custom={3} initial="hidden" animate="show" className="app-panel rounded-lg p-4 sm:p-5">
+      <motion.div variants={fade} custom={4} initial="hidden" animate="show" className="app-panel rounded-lg p-4 sm:p-5">
         <SectionTitle icon={<Activity className="h-4 w-4" />}>Résumé IA</SectionTitle>
         {narrative.verdict && (
           <div className="mb-3 rounded-lg border border-primary/20 bg-primary/[0.08] px-3 py-2 text-sm font-extrabold text-brand-soft">
@@ -529,7 +564,7 @@ function FullAnalysis({
         </ul>
       </motion.div>
 
-      <motion.div variants={fade} custom={4} initial="hidden" animate="show" className="app-panel-muted rounded-lg p-4 sm:p-5">
+      <motion.div variants={fade} custom={5} initial="hidden" animate="show" className="app-panel-muted rounded-lg p-4 sm:p-5">
         <SectionTitle icon={<ShieldCheck className="h-4 w-4" />}>Pourquoi ce pronostic</SectionTitle>
         <div className="grid gap-2 sm:grid-cols-2">
           {p.modelSignals.map((signal) => (
@@ -547,7 +582,7 @@ function FullAnalysis({
       </motion.div>
 
       {/* Sélections phares */}
-      <motion.div variants={fade} custom={5} initial="hidden" animate="show">
+      <motion.div variants={fade} custom={6} initial="hidden" animate="show">
         <SectionTitle icon={<Sparkles className="h-4 w-4" />}>Sélections phares</SectionTitle>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {p.headlinePicks.map((pick, i) => (
