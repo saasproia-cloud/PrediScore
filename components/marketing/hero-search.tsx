@@ -7,7 +7,15 @@ import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import type { TeamRef } from "@/types/football";
 import { cn } from "@/lib/utils";
 
-export function HeroSearch() {
+export function HeroSearch({
+  placeholder = "Recherchez une équipe (ex : Maroc, France, PSG…)",
+  analyzeLabel = "Analyser le match",
+  analyzeShortLabel = "Analyser",
+}: {
+  placeholder?: string;
+  analyzeLabel?: string;
+  analyzeShortLabel?: string;
+} = {}) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<TeamRef | null>(null);
@@ -86,7 +94,7 @@ export function HeroSearch() {
           }}
           onFocus={() => (results.length || q.trim().length >= 2) && setOpen(true)}
           onKeyDown={(e) => e.key === "Enter" && go()}
-          placeholder="Recherchez une équipe (ex : Maroc, France, PSG…)"
+          placeholder={placeholder}
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.82)",
             color: "#ffffff",
@@ -116,8 +124,8 @@ export function HeroSearch() {
           onClick={go}
           className="absolute right-2 top-1/2 flex h-12 -translate-y-1/2 items-center gap-2 rounded-xl bg-gold-cta px-4 text-sm font-bold text-gold-foreground shadow-[0_8px_24px_-6px_hsl(var(--gold)/0.5)] transition hover:opacity-95"
         >
-          <span className="hidden sm:inline">Analyser le match</span>
-          <span className="sm:hidden">Analyser</span>
+          <span className="hidden sm:inline">{analyzeLabel}</span>
+          <span className="sm:hidden">{analyzeShortLabel}</span>
           <ArrowRight className="h-4 w-4" />
         </button>
 

@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { REF_COOKIE, REF_MAX_AGE } from "@/lib/affiliate/config";
 
 function harden(response: NextResponse): NextResponse {
   response.headers.set("X-Content-Type-Options", "nosniff");
@@ -20,6 +21,20 @@ export async function middleware(request: NextRequest) {
     pathname === "/app" ||
     pathname.startsWith("/app/") ||
     (pathname === "/pricing" && request.nextUrl.searchParams.has("checkout"));
+
+  // Affiliation : mémorise le code du lien ?ref=CODE dans un cookie (60 jours).
+  const refParam = request.nextUrl.searchParams.get("ref");
+  const setRef = (res: NextResponse): NextResponse => {
+    if (refParam) {
+      res.cookies.set(REF_COOKIE, refParam.slice(0, 64), {
+        maxAge: REF_MAX_AGE,
+        path: "/",
+        sameSite: "lax",
+        httpOnly: true,
+      });
+    }
+    return res;
+  };
   if (pathname === "/paywall" || pathname.startsWith("/paywall/")) {
     return harden(NextResponse.redirect(new URL("/app/subscription", request.url)));
   }
@@ -41,7 +56,7 @@ export async function middleware(request: NextRequest) {
       target.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
       return harden(NextResponse.redirect(target));
     }
-    return harden(NextResponse.next());
+    return harden(setRef(NextResponse.next()));
   }
 
   let response = NextResponse.next({ request });
@@ -74,7 +89,7 @@ export async function middleware(request: NextRequest) {
     return harden(NextResponse.redirect(target));
   }
 
-  return harden(response);
+  return harden(setRef(response));
 }
 
 export const config = {

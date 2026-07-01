@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { planByWhopPlanId } from "@/lib/billing/prediscore";
+import { recordConversion } from "@/lib/data/affiliate";
 import { getClientIp, rateLimit, rateLimitResponse } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
@@ -178,6 +179,13 @@ export async function POST(req: Request) {
   if (error) {
     console.error("[PrediScore][whop] upsert payments:", error.message);
     return NextResponse.json({ error: "db" }, { status: 500 });
+  }
+
+  // Affiliation : au 1er paiement, crédite le parrain (idempotent, non bloquant).
+  if (status === "active" && plan) {
+    void recordConversion({ email: email.toLowerCase(), planId: plan.id, amount: plan.price }).catch(
+      (e) => console.error("[PrediScore][aff] conversion:", e),
+    );
   }
 
   return NextResponse.json({ ok: true });

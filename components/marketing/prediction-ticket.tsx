@@ -5,6 +5,13 @@ type Team = { name: string; logo?: string };
 
 // Carte de prédiction — équivalent « prédiction pure » du ticket de paris Kickly :
 // match, score probable, barres de probabilités, niveau de confiance.
+const DEFAULT_LABELS = {
+  ready: "Analyse prête",
+  confidence: "Confiance",
+  likelyScore: "score probable",
+  draw: "Match nul",
+};
+
 export function PredictionTicket({
   home,
   away,
@@ -13,6 +20,7 @@ export function PredictionTicket({
   confidence = 78,
   className,
   featured = false,
+  labels = DEFAULT_LABELS,
 }: {
   home: Team;
   away: Team;
@@ -21,11 +29,12 @@ export function PredictionTicket({
   confidence?: number;
   className?: string;
   featured?: boolean;
+  labels?: { ready: string; confidence: string; likelyScore: string; draw: string };
 }) {
   const toPct = (v: number) => Math.round(v * 100);
   const rows = [
     { label: home.name, value: toPct(outcome.home), tone: "primary" as const },
-    { label: "Match nul", value: toPct(outcome.draw), tone: "muted" as const },
+    { label: labels.draw, value: toPct(outcome.draw), tone: "muted" as const },
     { label: away.name, value: toPct(outcome.away), tone: "gold" as const },
   ];
 
@@ -41,9 +50,11 @@ export function PredictionTicket({
     >
       <div className="mb-3 flex items-center justify-between">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Analyse prête
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" /> {labels.ready}
         </span>
-        <span className="text-[10px] font-bold text-gold">Confiance {confidence}%</span>
+        <span className="text-[10px] font-bold text-gold">
+          {labels.confidence} {confidence}%
+        </span>
       </div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-xl border border-white/10 bg-black/40 p-3">
@@ -54,7 +65,7 @@ export function PredictionTicket({
             <span className="mx-1 text-white/40">–</span>
             {score.away}
           </div>
-          <div className="text-[8px] uppercase tracking-wide text-muted-foreground">score probable</div>
+          <div className="text-[8px] uppercase tracking-wide text-muted-foreground">{labels.likelyScore}</div>
         </div>
         <TeamSide team={away} />
       </div>

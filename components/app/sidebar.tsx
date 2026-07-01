@@ -18,6 +18,7 @@ import {
   ChevronRight,
   LogIn,
   ShieldCheck,
+  Handshake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/constants/config";
@@ -29,6 +30,7 @@ interface SidebarAccount {
   active: boolean;
   analysisCount: number;
   analysisLimit: number | null;
+  isAdmin: boolean;
 }
 
 const NAV = [
@@ -209,6 +211,33 @@ export function Sidebar({ account }: { account: SidebarAccount }) {
             </Link>
           );
         })}
+        {account.isAdmin && (
+          <Link
+            href="/app/affiliates"
+            onClick={() => setPendingHref(isActive("/app/affiliates") ? null : "/app/affiliates")}
+            className={cn(
+              "group relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2.5 text-sm font-semibold transition",
+              isActive("/app/affiliates")
+                ? "bg-[linear-gradient(90deg,hsl(var(--gold)/0.17),hsl(var(--gold)/0.05))] text-foreground ring-1 ring-gold/25"
+                : "text-muted-foreground hover:bg-white/[0.045] hover:text-foreground",
+            )}
+          >
+            <span
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg transition",
+                isActive("/app/affiliates")
+                  ? "bg-gold/[0.18] text-gold"
+                  : "bg-white/[0.035] text-muted-foreground group-hover:text-foreground",
+              )}
+            >
+              <Handshake className="h-4 w-4" />
+            </span>
+            <span className="flex-1">Affiliés</span>
+            <span className="rounded bg-gold/[0.15] px-1.5 py-0.5 text-[10px] font-semibold text-gold">
+              Admin
+            </span>
+          </Link>
+        )}
       </nav>
       <div className="mt-auto space-y-3">
         <UpgradeCard account={account} />
