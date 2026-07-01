@@ -118,6 +118,7 @@ export default async function AffiliatesPage() {
             <tbody>
               {stats.map((a) => {
                 const link = `${SITE_URL}/?ref=${a.code}`;
+                const statsLink = `${SITE_URL}/partenaire/${a.stats_token}`;
                 return (
                   <tr key={a.code} className="border-t border-white/8">
                     <td className="py-3 pr-3">
@@ -127,13 +128,23 @@ export default async function AffiliatesPage() {
                       </div>
                     </td>
                     <td className="py-3 pr-3">
-                      <div className="flex items-center gap-1.5">
-                        <LinkIcon className="h-3.5 w-3.5 shrink-0 text-primary" />
-                        <input
-                          readOnly
-                          value={link}
-                          className="w-[240px] max-w-[46vw] rounded-md border border-white/10 bg-black/40 px-2 py-1 text-[11px] text-white/80"
-                        />
+                      <div className="space-y-1.5">
+                        <label className="flex items-center gap-1.5" title="Lien d'affiliation — l'influenceur le met en bio">
+                          <LinkIcon className="h-3.5 w-3.5 shrink-0 text-primary" />
+                          <input
+                            readOnly
+                            value={link}
+                            className="w-[240px] max-w-[46vw] rounded-md border border-white/10 bg-black/40 px-2 py-1 text-[11px] text-white/80"
+                          />
+                        </label>
+                        <label className="flex items-center gap-1.5" title="Lien privé stats — à envoyer à l'influenceur">
+                          <LinkIcon className="h-3.5 w-3.5 shrink-0 text-gold" />
+                          <input
+                            readOnly
+                            value={statsLink}
+                            className="w-[240px] max-w-[46vw] rounded-md border border-gold/20 bg-black/40 px-2 py-1 text-[11px] text-gold-soft"
+                          />
+                        </label>
                       </div>
                     </td>
                     <td className="py-3 pr-3 text-right tabular-nums">{a.clicks}</td>

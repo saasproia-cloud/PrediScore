@@ -16,9 +16,18 @@ create table if not exists public.affiliates (
   name            text,
   payout_email    text,                              -- email pour le paiement Whop
   commission_rate numeric not null default 0.30,     -- 0.30 = 30% du 1er paiement
+  stats_token     uuid not null default gen_random_uuid(), -- lien privé stats influenceur
   active          boolean not null default true,
   created_at      timestamptz not null default now()
 );
+
+-- Migration douce si la table existait déjà sans stats_token : chaque affilié
+-- reçoit un jeton secret, utilisé dans /partenaire/<token> (l'influenceur y
+-- consulte SES stats sans aucun accès à Supabase).
+alter table public.affiliates
+  add column if not exists stats_token uuid not null default gen_random_uuid();
+create unique index if not exists affiliates_stats_token_idx
+  on public.affiliates (stats_token);
 
 -- Clics sur les liens d'affiliation (une ligne par visite avec ?ref).
 create table if not exists public.affiliate_clicks (
@@ -68,7 +77,8 @@ select
   coalesce(r.signups, 0)    as signups,
   coalesce(v.paying, 0)     as paying,
   coalesce(v.revenue, 0)    as revenue,
-  coalesce(v.commission, 0) as commission_total
+  coalesce(v.commission, 0) as commission_total,
+  a.stats_token
 from public.affiliates a
 left join (select code, count(*) as clicks from public.affiliate_clicks group by code) c on c.code = a.code
 left join (select code, count(*) as signups from public.affiliate_referrals group by code) r on r.code = a.code

@@ -155,7 +155,7 @@ export function MatchAnalyzer({
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="app-panel rounded-lg p-3.5 sm:p-5">
+      <div className="app-panel relative z-30 rounded-lg p-3.5 sm:p-5">
         <div className="mb-3 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Match officiel à analyser

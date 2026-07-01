@@ -324,18 +324,12 @@ export default async function HomePage() {
           <div className="blob-gold pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full blur-3xl opacity-30" />
           <h2 className="display-title text-[clamp(2rem,4.4vw,3.6rem)] text-white">{t.finalCta.title}</h2>
           <p className="mx-auto mt-4 max-w-md text-white/70">{t.finalCta.subtitle}</p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex justify-center">
             <Link
               href="/connexion?next=%2Fapp"
               className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-gold-cta px-8 text-base font-bold text-gold-foreground shadow-[0_16px_50px_-12px_hsl(var(--gold)/0.6)] transition hover:opacity-95"
             >
               {t.finalCta.primary} <ArrowRight className="h-5 w-5" />
-            </Link>
-            <Link
-              href="/pricing"
-              className="inline-flex h-14 items-center justify-center rounded-full border border-white/25 bg-white/[0.04] px-8 text-base font-semibold text-white transition hover:border-white/40 hover:bg-white/10"
-            >
-              {t.finalCta.secondary}
             </Link>
           </div>
         </div>
@@ -348,7 +342,6 @@ export default async function HomePage() {
             © {new Date().getFullYear()} {SITE_NAME} · {t.footer.tagline}
           </div>
           <div className="flex gap-4">
-            <Link href="/pricing" className="hover:text-white">{t.footer.pricing}</Link>
             <Link href="/mentions-legales" className="hover:text-white">{t.footer.legal}</Link>
             <Link href="/confidentialite" className="hover:text-white">{t.footer.privacy}</Link>
           </div>

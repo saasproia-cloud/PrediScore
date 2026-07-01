@@ -13,7 +13,10 @@ export interface AffiliateStat {
   paying: number;
   revenue: number;
   commission_total: number;
+  stats_token: string;
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface AffiliateRow {
   code: string;
@@ -22,11 +25,15 @@ interface AffiliateRow {
 }
 
 export async function getAffiliateByCode(code: string): Promise<AffiliateRow | null> {
+  const trimmed = code.trim();
+  if (!trimmed) return null;
   const admin = createSupabaseAdminClient();
+  // Insensible à la casse : un code saisi « Raphael » dans Supabase reste trouvé
+  // même si le lien arrive en « raphael » (les codes sont uniques et URL-safe).
   const { data } = await admin
     .from("affiliates")
     .select("code, commission_rate, active")
-    .eq("code", code)
+    .ilike("code", trimmed)
     .maybeSingle();
   return (data as AffiliateRow | null) ?? null;
 }
@@ -82,6 +89,28 @@ export async function recordConversion(params: { email: string; planId: string; 
 }
 
 // --- Admin -----------------------------------------------------------------
+
+// Stats d'UN affilié via son jeton secret (page publique /partenaire/<token>).
+// Le jeton est un UUID non devinable → l'influenceur voit ses chiffres sans
+// aucun accès à Supabase, et ne peut pas voir ceux des autres.
+export async function getAffiliateStatByToken(token: string): Promise<AffiliateStat | null> {
+  const clean = token.trim();
+  if (!UUID_RE.test(clean)) return null;
+  const admin = createSupabaseAdminClient();
+  const { data: aff } = await admin
+    .from("affiliates")
+    .select("code")
+    .eq("stats_token", clean)
+    .maybeSingle();
+  const code = (aff as { code: string } | null)?.code;
+  if (!code) return null;
+  const { data } = await admin
+    .from("affiliate_stats")
+    .select("*")
+    .eq("code", code)
+    .maybeSingle();
+  return (data as AffiliateStat | null) ?? null;
+}
 
 export async function listAffiliateStats(): Promise<AffiliateStat[]> {
   const admin = createSupabaseAdminClient();
