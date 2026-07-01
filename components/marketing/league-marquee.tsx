@@ -18,12 +18,12 @@ export function LeagueMarquee() {
         {row.map((l, i) => (
           <div
             key={`${l.id}-${i}`}
-            className="flex shrink-0 items-center gap-2.5 rounded-full border border-border/70 bg-card/50 px-4 py-2 backdrop-blur"
+            className="flex shrink-0 items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur"
           >
             {l.logo && (
               <Image src={l.logo} alt="" width={22} height={22} className="h-[22px] w-[22px] object-contain" />
             )}
-            <span className="whitespace-nowrap text-sm font-medium text-foreground/85">{l.name}</span>
+            <span className="whitespace-nowrap text-sm font-medium text-white/70">{l.name}</span>
           </div>
         ))}
       </div>

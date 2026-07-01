@@ -280,7 +280,7 @@ function Paywall() {
     "Le niveau de confiance détaillé de l'analyse",
   ];
   return (
-    <div className="relative overflow-hidden rounded-lg border border-emerald-300/[0.35] bg-[radial-gradient(circle_at_12%_10%,rgba(52,211,153,0.24),transparent_34%),radial-gradient(circle_at_88%_18%,rgba(34,211,238,0.24),transparent_34%),linear-gradient(135deg,rgba(6,18,24,0.95),rgba(13,40,32,0.9)_52%,rgba(71,48,8,0.62))] p-4 shadow-[0_24px_80px_rgba(16,185,129,0.18)] sm:p-6">
+    <div className="relative overflow-hidden rounded-lg border border-primary/30 bg-[radial-gradient(circle_at_12%_10%,hsl(var(--primary)/0.2),transparent_36%),radial-gradient(circle_at_88%_18%,hsl(var(--gold)/0.16),transparent_36%),linear-gradient(135deg,rgba(8,8,8,0.96),rgba(10,24,18,0.9)_52%,rgba(34,27,6,0.5))] p-4 shadow-[0_24px_80px_-16px_rgba(0,0,0,0.7)] sm:p-6">
       <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 left-10 h-56 w-56 rounded-full bg-primary/[0.16] blur-3xl" />
       <div className="relative">

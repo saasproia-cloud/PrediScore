@@ -39,8 +39,8 @@ export function PhoneMockup() {
       <FloatingCrest id={49} className="-right-12 bottom-24" delay="1.8s" />
       <FloatingCrest id={157} className="right-16 -bottom-4" delay="0.9s" size={50} />
 
-      <div className="absolute -right-20 top-28 z-30 hidden w-52 rounded-2xl border border-emerald-300/25 bg-[#07131a]/90 p-3 text-left shadow-[0_18px_60px_rgba(16,185,129,0.22)] backdrop-blur md:block">
-        <div className="mb-1 flex items-center gap-2 text-[11px] font-bold text-emerald-200">
+      <div className="absolute -right-20 top-28 z-30 hidden w-52 rounded-2xl border border-primary/25 bg-[#0a0a0a]/95 p-3 text-left shadow-[0_18px_60px_-12px_hsl(var(--primary)/0.35)] backdrop-blur md:block">
+        <div className="mb-1 flex items-center gap-2 text-[11px] font-bold text-primary">
           <Bell className="h-3.5 w-3.5" />
           Alerte PrediScore
         </div>
@@ -49,14 +49,14 @@ export function PhoneMockup() {
         </p>
         <div className="mt-2 flex items-center justify-between text-[10px] text-white/50">
           <span>Confiance 82/100</span>
-          <span className="text-emerald-300">validé</span>
+          <span className="text-primary">validé</span>
         </div>
       </div>
 
       {/* châssis */}
-      <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] border-[6px] border-[hsl(158_20%_12%)] bg-[hsl(158_30%_6%)] shadow-2xl">
+      <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] border-[6px] border-[#161616] bg-[#080808] shadow-2xl">
         {/* encoche */}
-        <div className="absolute left-1/2 top-2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-[hsl(158_20%_10%)]" />
+        <div className="absolute left-1/2 top-2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
 
         <div className="flex h-full flex-col px-4 pb-4 pt-8">
           {/* barre app */}

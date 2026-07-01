@@ -77,7 +77,7 @@ function UpgradeCard({ account }: { account: SidebarAccount }) {
   const plan = account.planId ? getPrediscorePlan(account.planId) : null;
   if (account.active && plan) {
     return (
-      <div className="relative overflow-hidden rounded-lg border border-gold/25 bg-[radial-gradient(circle_at_15%_0%,hsl(var(--primary)/0.18),transparent_40%),radial-gradient(circle_at_92%_0%,hsl(var(--gold)/0.12),transparent_36%),linear-gradient(145deg,hsl(var(--card)/0.86),hsl(164_42%_8%/0.92))] p-3.5 shadow-[0_16px_45px_rgb(0_0_0/0.18)]">
+      <div className="relative overflow-hidden rounded-lg border border-gold/25 bg-[radial-gradient(circle_at_15%_0%,hsl(var(--primary)/0.16),transparent_40%),radial-gradient(circle_at_92%_0%,hsl(var(--gold)/0.12),transparent_36%),linear-gradient(145deg,hsl(0_0%_8%/0.9),hsl(0_0%_5%/0.94))] p-3.5 shadow-[0_16px_45px_rgb(0_0_0/0.35)]">
         <div className="mb-2 flex items-center justify-between gap-2 text-sm font-bold">
           <span className="inline-flex min-w-0 items-center gap-1.5">
             <Crown className="h-4 w-4 shrink-0 text-gold" /> Plan {plan.name}
@@ -106,7 +106,7 @@ function UpgradeCard({ account }: { account: SidebarAccount }) {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-gold/25 bg-[radial-gradient(circle_at_20%_0%,hsl(var(--primary)/0.20),transparent_44%),radial-gradient(circle_at_100%_0%,hsl(var(--gold)/0.13),transparent_42%),linear-gradient(145deg,hsl(var(--card)/0.88),hsl(164_44%_8%/0.94))] p-3.5 shadow-[0_16px_45px_rgb(0_0_0/0.18)]">
+    <div className="relative overflow-hidden rounded-lg border border-gold/25 bg-[radial-gradient(circle_at_20%_0%,hsl(var(--primary)/0.18),transparent_44%),radial-gradient(circle_at_100%_0%,hsl(var(--gold)/0.13),transparent_42%),linear-gradient(145deg,hsl(0_0%_8%/0.92),hsl(0_0%_5%/0.95))] p-3.5 shadow-[0_16px_45px_rgb(0_0_0/0.35)]">
       <div className="mb-1 flex items-center gap-1.5 text-sm font-bold text-foreground">
         <Crown className="h-4 w-4 text-gold" /> Débloquer PrediScore
       </div>
@@ -161,7 +161,7 @@ export function Sidebar({ account }: { account: SidebarAccount }) {
   }, [pathname]);
 
   return (
-    <aside className="sticky top-0 z-20 hidden h-dvh w-[292px] shrink-0 flex-col gap-5 border-r border-white/10 bg-[linear-gradient(180deg,hsl(166_38%_7%/0.92),hsl(158_46%_6%/0.88))] p-4 shadow-[24px_0_70px_rgb(0_0_0/0.18)] backdrop-blur-2xl lg:flex">
+    <aside className="sticky top-0 z-20 hidden h-dvh w-[292px] shrink-0 flex-col gap-5 border-r border-white/10 bg-[linear-gradient(180deg,hsl(0_0%_7%/0.92),hsl(0_0%_4%/0.9))] p-4 shadow-[24px_0_70px_rgb(0_0_0/0.35)] backdrop-blur-2xl lg:flex">
       <RouteProgress show={Boolean(pendingHref)} />
       <div className="pt-1">
         <Brand />

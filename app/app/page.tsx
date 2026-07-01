@@ -40,10 +40,10 @@ export default async function AppHomePage({
       <header className="app-panel mb-5 overflow-hidden rounded-lg p-4 sm:mb-6 sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold">
               <Sparkles className="h-3.5 w-3.5" /> Match Lab
             </div>
-            <h1 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
+            <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
               Analyse de match
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">

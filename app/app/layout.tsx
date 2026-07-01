@@ -33,7 +33,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const account = await appAccount();
   return (
     <div className="relative flex h-dvh overflow-hidden bg-background">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_-8%,hsl(var(--primary)/0.20),transparent_34%),radial-gradient(circle_at_78%_8%,hsl(var(--gold)/0.11),transparent_30%),radial-gradient(circle_at_62%_92%,hsl(var(--gold)/0.07),transparent_30%),linear-gradient(180deg,hsl(166_40%_5%),hsl(164_42%_7%)_46%,hsl(158_48%_6%))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_-8%,hsl(var(--primary)/0.12),transparent_34%),radial-gradient(circle_at_82%_4%,hsl(var(--gold)/0.09),transparent_30%),radial-gradient(circle_at_62%_96%,hsl(var(--gold)/0.05),transparent_32%),linear-gradient(180deg,hsl(0_0%_5%),hsl(0_0%_3.5%))]" />
       <div className="dashboard-grid pointer-events-none absolute inset-0 opacity-80" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.035] to-transparent" />
       <Sidebar account={account} />

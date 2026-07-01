@@ -3,42 +3,42 @@
 @tailwind utilities;
 
 :root {
-  /* PrediScore — vert bouteille premium + touches d'or champagne.
-     L'objectif : riche, sportif, lisible, sans effet néon agressif. */
-  --background: 166 35% 6.5%; /* vert-noir profond */
-  --foreground: 160 14% 98%;
+  /* PrediScore — refonte « Kickly » : noir pur, or vif, vert vif, blanc.
+     Objectif : contraste élevé, sportif, punchy. */
+  --background: 0 0% 4%; /* noir quasi pur */
+  --foreground: 0 0% 98%;
 
-  --card: 164 29% 10%;
-  --card-foreground: 160 12% 98%;
+  --card: 0 0% 7%; /* noir-charbon */
+  --card-foreground: 0 0% 98%;
 
-  --muted: 162 18% 16%;
-  --muted-foreground: 158 10% 68%;
+  --muted: 0 0% 13%;
+  --muted-foreground: 0 0% 64%;
 
-  --secondary: 164 22% 13%;
-  --secondary-foreground: 160 12% 98%;
+  --secondary: 0 0% 11%;
+  --secondary-foreground: 0 0% 98%;
 
-  --accent: 164 24% 14%;
-  --accent-foreground: 160 12% 98%;
+  --accent: 0 0% 12%;
+  --accent-foreground: 0 0% 98%;
 
-  --primary: 154 58% 42%; /* vert émeraude profond — accent principal */
-  --primary-foreground: 158 54% 6%;
+  --primary: 148 72% 58%; /* vert vif — titres, succès, CTA verts */
+  --primary-foreground: 150 65% 7%;
 
   --destructive: 0 72% 55%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 162 18% 18%;
-  --input: 162 18% 20%;
-  --ring: 154 58% 42%;
+  --border: 0 0% 16%;
+  --input: 0 0% 18%;
+  --ring: 45 96% 56%;
 
-  --brand-soft: 148 54% 82%; /* menthe douce — gros titres display */
+  --brand-soft: 148 66% 66%; /* vert clair — gros titres display */
 
-  /* Accents secondaires : vert profond + or, le cyan reste minimal pour les données. */
-  --teal: 166 52% 39%;
-  --cyan: 178 48% 46%;
-  --gold: 43 86% 61%;
-  --gold-soft: 45 78% 76%;
-  --gold-foreground: 42 55% 9%;
-  --violet: 256 52% 64%;
+  /* Accents : or vif (CTA principal) + vert, cyan/violet réservés aux data. */
+  --teal: 160 60% 46%;
+  --cyan: 174 62% 50%;
+  --gold: 45 96% 56%; /* or vif / jaune-or — CTA principal */
+  --gold-soft: 46 92% 70%;
+  --gold-foreground: 45 90% 7%; /* texte noir sur bouton or */
+  --violet: 256 60% 66%;
 
   --radius: 0.5rem;
 }
@@ -72,18 +72,28 @@ body {
     color: transparent;
   }
 
-  /* Menthe douce — gros titres display prediscore. */
+  /* Vert clair — gros titres display prediscore. */
   .text-brand-soft {
     color: hsl(var(--brand-soft));
+  }
+
+  /* Gros titre de section en vert vif (style Kickly). */
+  .text-display-green {
+    color: hsl(var(--primary));
   }
 
   /* Gros titre display — capitales, lourd, serré (signature prediscore). */
   .display-title {
     text-transform: uppercase;
-    font-weight: 800;
-    letter-spacing: 0;
-    line-height: 0.92;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    line-height: 0.9;
     text-wrap: balance;
+  }
+
+  /* Dégradé or pour le CTA principal (bouton « Analyser »). */
+  .bg-gold-cta {
+    background-image: linear-gradient(135deg, hsl(var(--gold-soft)), hsl(var(--gold)));
   }
 
   /* Halo vert diffus derrière le hero / les sections. */
@@ -145,44 +155,48 @@ body {
     animation: prediscore-float 9s ease-in-out infinite;
   }
 
-  /* Halo lumineux des projecteurs du stade. */
+  /* Halo lumineux des projecteurs du stade (or + vert sur noir). */
   .floodlight {
     background: radial-gradient(
       55% 45% at 50% -8%,
-      hsl(var(--gold-soft) / 0.18) 0%,
-      hsl(var(--primary) / 0.1) 28%,
-      transparent 62%
+      hsl(var(--gold) / 0.16) 0%,
+      hsl(var(--primary) / 0.1) 30%,
+      transparent 64%
     );
   }
 
-  /* Pelouse en perspective (bandes de tonte + dégradé). */
+  /* Pelouse en perspective (bandes de tonte + dégradé, sur noir). */
   .pitch-turf {
     background:
       repeating-linear-gradient(
         90deg,
-        hsl(154 48% 15% / 0.55) 0 60px,
-        hsl(158 48% 12% / 0.55) 60px 120px
+        hsl(150 45% 10% / 0.55) 0 60px,
+        hsl(150 45% 7% / 0.55) 60px 120px
       ),
       linear-gradient(
         to top,
-        hsl(154 52% 16%) 0%,
-        hsl(158 44% 10%) 45%,
+        hsl(150 48% 10%) 0%,
+        hsl(0 0% 4%) 55%,
         transparent 100%
       );
   }
 
-  /* Grille de lignes du terrain qui converge (effet profondeur). */
+  /* Grille de lignes du terrain qui converge (effet profondeur, vert vif). */
   .pitch-perspective {
     background-image:
-      linear-gradient(to right, hsl(150 70% 80% / 0.18) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(150 70% 80% / 0.16) 1px, transparent 1px);
+      linear-gradient(to right, hsl(148 82% 62% / 0.18) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(148 82% 62% / 0.15) 1px, transparent 1px);
     background-size: 70px 70px;
     transform: perspective(420px) rotateX(64deg) scale(1.6);
     transform-origin: bottom center;
   }
 
   .text-glow {
-    text-shadow: 0 0 28px hsl(var(--primary) / 0.45);
+    text-shadow: 0 0 30px hsl(var(--primary) / 0.5);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 30px hsl(var(--gold) / 0.42);
   }
 }
 
@@ -244,9 +258,9 @@ body {
     background: radial-gradient(circle, hsl(var(--cyan) / 0.18), transparent 70%);
   }
 
-  /* Titres : dégradé blanc → menthe avec une pointe d'or. */
+  /* Titres : dégradé blanc → vert clair (signature Kickly-isée). */
   .text-gradient-brand {
-    background: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(var(--brand-soft)) 72%, hsl(var(--gold-soft)) 130%);
+    background: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 48%, hsl(var(--brand-soft)) 118%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -287,18 +301,18 @@ body {
   }
 
   .app-panel {
-    border: 1px solid hsl(var(--border) / 0.82);
+    border: 1px solid hsl(var(--border) / 0.9);
     background:
-      radial-gradient(circle at 12% 0%, hsl(var(--primary) / 0.12), transparent 34%),
-      radial-gradient(circle at 92% 4%, hsl(var(--gold) / 0.075), transparent 30%),
-      linear-gradient(145deg, hsl(164 24% 12% / 0.8), hsl(164 38% 7.5% / 0.88));
-    box-shadow: 0 18px 58px rgb(0 0 0 / 0.24);
+      radial-gradient(circle at 12% 0%, hsl(var(--primary) / 0.1), transparent 34%),
+      radial-gradient(circle at 92% 4%, hsl(var(--gold) / 0.08), transparent 30%),
+      linear-gradient(145deg, hsl(0 0% 9% / 0.85), hsl(0 0% 5% / 0.9));
+    box-shadow: 0 18px 58px rgb(0 0 0 / 0.4);
     backdrop-filter: blur(18px);
   }
 
   .app-panel-muted {
-    border: 1px solid hsl(var(--border) / 0.7);
-    background: hsl(164 26% 9.5% / 0.62);
+    border: 1px solid hsl(var(--border) / 0.8);
+    background: hsl(0 0% 8% / 0.62);
     backdrop-filter: blur(14px);
   }
 

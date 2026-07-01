@@ -63,10 +63,10 @@ export function HeroSearch() {
   const leadingTeam = selected ?? (!loading && q.trim().length >= 2 ? results[0] : null);
 
   return (
-    <div ref={boxRef} className="mx-auto w-full max-w-[440px]">
+    <div ref={boxRef} className="mx-auto w-full max-w-[560px]">
       <div className="relative">
         {!leadingTeam?.logo && (
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/55" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/55" />
         )}
         {leadingTeam?.logo && (
           <Image
@@ -86,16 +86,16 @@ export function HeroSearch() {
           }}
           onFocus={() => (results.length || q.trim().length >= 2) && setOpen(true)}
           onKeyDown={(e) => e.key === "Enter" && go()}
-          placeholder="Recherchez l'une des équipes (ex : Maroc, France, PSG...)"
+          placeholder="Recherchez une équipe (ex : Maroc, France, PSG…)"
           style={{
-            backgroundColor: "rgba(5, 10, 20, 0.96)",
+            backgroundColor: "rgba(0, 0, 0, 0.82)",
             color: "#ffffff",
             WebkitTextFillColor: "#ffffff",
             colorScheme: "dark",
           }}
           className={cn(
-            "h-[52px] w-full appearance-none rounded-xl border border-gold/[0.55] pr-28 text-base font-medium shadow-[0_0_0_1px_hsl(var(--primary)/0.25),0_18px_55px_hsl(var(--primary)/0.2)] outline-none ring-primary/[0.35] backdrop-blur-md transition placeholder:text-white/[0.48] focus:border-primary focus:ring-2 sm:text-sm",
-            leadingTeam?.logo ? "pl-14" : "pl-11",
+            "h-16 w-full appearance-none rounded-2xl border border-gold/50 pr-[124px] text-base font-medium shadow-[0_0_0_1px_hsl(var(--gold)/0.18),0_28px_80px_-24px_hsl(var(--gold)/0.4)] outline-none ring-gold/40 backdrop-blur-md transition placeholder:text-white/45 focus:border-gold focus:ring-2 sm:pr-[188px]",
+            leadingTeam?.logo ? "pl-14" : "pl-12",
           )}
         />
         {selected && (
@@ -106,7 +106,7 @@ export function HeroSearch() {
               setQ("");
               setResults([]);
             }}
-            className="absolute right-24 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white"
+            className="absolute right-[118px] top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white sm:right-[196px]"
             aria-label="Effacer l'équipe"
           >
             <X className="h-4 w-4" />
@@ -114,15 +114,17 @@ export function HeroSearch() {
         )}
         <button
           onClick={go}
-          className="absolute right-2 top-1/2 flex h-9 -translate-y-1/2 items-center gap-1.5 rounded-lg border border-gold/30 bg-[#081811] px-3 text-xs font-extrabold text-white transition hover:border-gold/60 hover:bg-primary hover:text-primary-foreground"
+          className="absolute right-2 top-1/2 flex h-12 -translate-y-1/2 items-center gap-2 rounded-xl bg-gold-cta px-4 text-sm font-bold text-gold-foreground shadow-[0_8px_24px_-6px_hsl(var(--gold)/0.5)] transition hover:opacity-95"
         >
-          Continuer <ArrowRight className="h-4 w-4" />
+          <span className="hidden sm:inline">Analyser le match</span>
+          <span className="sm:hidden">Analyser</span>
+          <ArrowRight className="h-4 w-4" />
         </button>
 
         {open && (loading || results.length > 0 || q.trim().length >= 2) && !selected && (
           <div
-            className="absolute z-30 mt-2 max-h-[420px] w-full overflow-y-auto rounded-xl border border-gold/30 text-left shadow-[0_20px_65px_hsl(var(--primary)/0.18)] backdrop-blur-xl"
-            style={{ backgroundColor: "rgba(5, 10, 20, 0.97)" }}
+            className="absolute z-30 mt-2 max-h-[420px] w-full overflow-y-auto rounded-2xl border border-gold/30 text-left shadow-[0_28px_80px_-16px_rgb(0_0_0/0.8)] backdrop-blur-xl"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.95)" }}
           >
             {loading && results.length === 0 && (
               <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
