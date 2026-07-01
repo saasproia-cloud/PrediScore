@@ -1,9 +1,46 @@
 // Mockup téléphone animé (style PrediScore) — écran d'analyse + écussons qui
-// flottent autour. Animations CSS (robustes, pas de JS).
+// flottent autour. Animations CSS (robustes, pas de JS). Libellés traduisibles.
 
 import Image from "next/image";
 import { Bell, CheckCircle2, ShieldCheck, Target, TrendingUp } from "lucide-react";
 import { teamLogo } from "@/lib/football/leagues";
+
+export type PhoneDict = {
+  verdict: string;
+  scoreModel: string;
+  probabilities: string;
+  draw: string;
+  scorer: string;
+  market: string;
+  strongSignal: string;
+  summary: string;
+  summaryText: string;
+  nextMatches: string;
+  open: string;
+  alert: string;
+  alertText: string;
+  confidence: string;
+  validated: string;
+};
+
+const DEFAULT_PHONE: PhoneDict = {
+  verdict: "Verdict IA",
+  scoreModel: "score modèle",
+  probabilities: "Probabilités",
+  draw: "Match nul",
+  scorer: "Buteur",
+  market: "Marché",
+  strongSignal: "signal fort",
+  summary: "Résumé du modèle",
+  summaryText:
+    "Arsenal garde l'avantage à domicile, Liverpool reste dangereux en transition. Le modèle privilégie un match ouvert avec but des deux côtés.",
+  nextMatches: "Prochains matchs",
+  open: "Ouvrir l'analyse complète",
+  alert: "Alerte PrediScore",
+  alertText: "Ton angle {market} est passé en signal fort.",
+  confidence: "Confiance",
+  validated: "validé",
+};
 
 function FloatingCrest({
   id,
@@ -26,7 +63,8 @@ function FloatingCrest({
   );
 }
 
-export function PhoneMockup() {
+export function PhoneMockup({ t = DEFAULT_PHONE }: { t?: PhoneDict }) {
+  const [alertBefore, alertAfter] = t.alertText.split("{market}");
   return (
     <div className="relative mx-auto h-[620px] w-[300px]">
       {/* lueur derrière le téléphone */}
@@ -42,14 +80,16 @@ export function PhoneMockup() {
       <div className="absolute -right-20 top-28 z-30 hidden w-52 rounded-2xl border border-primary/25 bg-[#0a0a0a]/95 p-3 text-left shadow-[0_18px_60px_-12px_hsl(var(--primary)/0.35)] backdrop-blur md:block">
         <div className="mb-1 flex items-center gap-2 text-[11px] font-bold text-primary">
           <Bell className="h-3.5 w-3.5" />
-          Alerte PrediScore
+          {t.alert}
         </div>
         <p className="text-xs leading-snug text-white/82">
-          Ton angle <span className="font-bold text-gold-soft">Over 2,5</span> est passé en signal fort.
+          {alertBefore}
+          <span className="font-bold text-gold-soft">Over 2,5</span>
+          {alertAfter}
         </p>
         <div className="mt-2 flex items-center justify-between text-[10px] text-white/50">
-          <span>Confiance 82/100</span>
-          <span className="text-primary">validé</span>
+          <span>{t.confidence} 82/100</span>
+          <span className="text-primary">{t.validated}</span>
         </div>
       </div>
 
@@ -72,14 +112,14 @@ export function PhoneMockup() {
 
           <div className="mb-3 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.14] to-gold/[0.08] p-3">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-primary">Verdict IA</span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-primary">{t.verdict}</span>
               <span className="rounded-full bg-primary/[0.15] px-2 py-0.5 text-[9px] font-bold text-primary">82/100</span>
             </div>
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
               <TeamMini id={42} name="Arsenal" />
               <div className="text-center">
                 <div className="text-2xl font-extrabold text-brand-soft">2-1</div>
-                <div className="text-[8px] uppercase text-muted-foreground">score modèle</div>
+                <div className="text-[8px] uppercase text-muted-foreground">{t.scoreModel}</div>
               </div>
               <TeamMini id={40} name="Liverpool" />
             </div>
@@ -89,35 +129,32 @@ export function PhoneMockup() {
           <div className="rounded-xl border border-border bg-card/70 p-3">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Probabilités
+                {t.probabilities}
               </span>
               <TrendingUp className="h-3.5 w-3.5 text-primary" />
             </div>
             <div className="space-y-2">
               <Probability label="Arsenal" value="63%" width="63%" tone="primary" />
-              <Probability label="Match nul" value="20%" width="20%" tone="muted" />
+              <Probability label={t.draw} value="20%" width="20%" tone="muted" />
               <Probability label="Liverpool" value="18%" width="18%" tone="gold" />
             </div>
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <Insight icon={<Target className="h-3.5 w-3.5" />} title="Buteur" value="Saka" detail="31%" />
-            <Insight icon={<ShieldCheck className="h-3.5 w-3.5" />} title="Marché" value="+2,5 buts" detail="signal fort" />
+            <Insight icon={<Target className="h-3.5 w-3.5" />} title={t.scorer} value="Saka" detail="31%" />
+            <Insight icon={<ShieldCheck className="h-3.5 w-3.5" />} title={t.market} value="+2,5 buts" detail={t.strongSignal} />
           </div>
 
           <div className="mt-3 rounded-xl border border-border bg-card/70 p-3">
             <div className="mb-2 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              <span className="text-xs font-bold">Résumé du modèle</span>
+              <span className="text-xs font-bold">{t.summary}</span>
             </div>
-            <p className="text-[10px] leading-relaxed text-muted-foreground">
-              Arsenal garde l'avantage à domicile, Liverpool reste dangereux en transition.
-              Le modèle privilégie un match ouvert avec but des deux côtés.
-            </p>
+            <p className="text-[10px] leading-relaxed text-muted-foreground">{t.summaryText}</p>
           </div>
 
           <div className="mt-3 rounded-xl border border-primary/30 bg-primary/10 p-3">
-            <div className="mb-2 text-[9px] font-bold uppercase tracking-[0.16em] text-primary">Prochains matchs</div>
+            <div className="mb-2 text-[9px] font-bold uppercase tracking-[0.16em] text-primary">{t.nextMatches}</div>
             <div className="space-y-2 text-[10px]">
               <NextLine home="PSG" away="Marseille" signal="Over 2,5" />
               <NextLine home="Real Madrid" away="Barça" signal="BTTS" />
@@ -125,7 +162,7 @@ export function PhoneMockup() {
           </div>
 
           <div className="mt-auto flex h-9 items-center justify-center rounded-xl bg-brand-gradient text-[11px] font-extrabold text-primary-foreground shadow-[0_12px_30px_hsl(var(--primary)/0.22)]">
-            Ouvrir l'analyse complète
+            {t.open}
           </div>
         </div>
       </div>

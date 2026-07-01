@@ -1,9 +1,12 @@
+import { cookies } from "next/headers";
 import { Sidebar, MobileNav } from "@/components/app/sidebar";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { loadEntitlement } from "@/lib/data/entitlement";
 import { analysisLimitFor, getDailyUsage } from "@/lib/data/usage";
 import type { BillingPlanId } from "@/types";
 import { getPrediscorePlan } from "@/lib/billing/prediscore";
+import { REF_COOKIE, isAdminEmail } from "@/lib/affiliate/config";
+import { ensureReferral } from "@/lib/data/affiliate";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +16,13 @@ async function appAccount() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user?.email) return { planId: null, active: false, analysisCount: 0, analysisLimit: 0 };
+    if (!user?.email)
+      return { planId: null, active: false, analysisCount: 0, analysisLimit: 0, isAdmin: false };
+
+    // Affiliation : enregistre le parrainage si un cookie ?ref est présent (idempotent).
+    const ref = (await cookies()).get(REF_COOKIE)?.value;
+    if (ref) void ensureReferral(user.email, ref).catch(() => {});
+
     const ent = await loadEntitlement(supabase, user.email);
     const usage = await getDailyUsage(user.email);
     const planId = ent.active && ent.planId && getPrediscorePlan(ent.planId) ? ent.planId : null;
@@ -23,9 +32,16 @@ async function appAccount() {
       active: ent.active && Boolean(planId),
       analysisCount: usage.analysisCount,
       analysisLimit: Number.isFinite(limit) ? limit : null,
+      isAdmin: isAdminEmail(user.email),
     };
   } catch {
-    return { planId: null as BillingPlanId | null, active: false, analysisCount: 0, analysisLimit: 0 };
+    return {
+      planId: null as BillingPlanId | null,
+      active: false,
+      analysisCount: 0,
+      analysisLimit: 0,
+      isAdmin: false,
+    };
   }
 }
 

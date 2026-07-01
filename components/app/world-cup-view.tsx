@@ -13,6 +13,7 @@ import {
   Search,
   Sparkles,
   Trophy,
+  Unlock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -52,7 +53,7 @@ const BRACKET = [
   ["🇪🇬 Egypt", "🇮🇷 Iran"],
 ];
 
-export function WorldCupView() {
+export function WorldCupView({ entitled = false }: { entitled?: boolean }) {
   const [view, setView] = useState<View>("groups");
 
   return (
@@ -80,15 +81,27 @@ export function WorldCupView() {
         </div>
       </section>
 
-      <section className="app-panel-muted rounded-lg p-4 text-center sm:p-6">
-        <Lock className="mx-auto mb-3 h-6 w-6 text-primary" />
-        <p className="text-sm text-muted-foreground">
-          Le top 3 des favoris, les scénarios de parcours et les probabilités de qualification sont réservés aux membres premium.
-        </p>
-        <Link href="/app/subscription" className="mt-5 inline-flex h-10 items-center justify-center rounded-lg bg-brand-gradient px-6 text-sm font-extrabold text-primary-foreground transition hover:scale-[1.01]">
-          Passer Premium
-        </Link>
-      </section>
+      {entitled ? (
+        <section className="rounded-lg border border-primary/30 bg-primary/[0.06] p-4 text-center sm:p-6">
+          <Unlock className="mx-auto mb-3 h-6 w-6 text-primary" />
+          <p className="text-sm text-foreground">
+            Accès premium actif : analyse chaque match de la Coupe du Monde sans limite.
+          </p>
+          <Link href="/app" className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-gradient px-6 text-sm font-extrabold text-primary-foreground transition hover:scale-[1.01]">
+            <Sparkles className="h-4 w-4" /> Analyser un match
+          </Link>
+        </section>
+      ) : (
+        <section className="app-panel-muted rounded-lg p-4 text-center sm:p-6">
+          <Lock className="mx-auto mb-3 h-6 w-6 text-primary" />
+          <p className="text-sm text-muted-foreground">
+            Le top 3 des favoris, les scénarios de parcours et les probabilités de qualification sont réservés aux membres premium.
+          </p>
+          <Link href="/app/subscription" className="mt-5 inline-flex h-10 items-center justify-center rounded-lg bg-brand-gradient px-6 text-sm font-extrabold text-primary-foreground transition hover:scale-[1.01]">
+            Passer Premium
+          </Link>
+        </section>
+      )}
 
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

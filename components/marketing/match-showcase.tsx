@@ -3,26 +3,33 @@ import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import type { TeamRef } from "@/types/football";
 import { LEAGUES } from "@/lib/football/leagues";
-
-const f = (p: number) => {
-  const v = p * 100;
-  return v >= 9.95 ? `${Math.round(v)}` : v.toFixed(1);
-};
+import { CountUp } from "@/components/marketing/count-up";
 
 // Section « Toute la Coupe du Monde couverte » — score démo réel du modèle,
-// fond 100 % CSS/SVG (aucune photo).
+// fond photo (terrain de nuit), chiffres animés.
 export function MatchShowcase({
   home,
   away,
   outcome,
   score,
+  t,
 }: {
   home: TeamRef;
   away: TeamRef;
   outcome: { home: number; draw: number; away: number };
   score: { home: number; away: number };
+  t: {
+    title: string;
+    demo: string;
+    subtitle: string;
+    winLabel: string;
+    draw: string;
+    cta: string;
+    footnote: string;
+  };
 }) {
   const leagues = LEAGUES.filter((l) => [39, 140, 135, 78, 61, 2].includes(l.id));
+  const win = (name: string) => t.winLabel.replace("{team}", name);
 
   return (
     <section id="coupe-du-monde" className="relative isolate overflow-hidden bg-background">
@@ -30,9 +37,7 @@ export function MatchShowcase({
 
       <div className="relative z-10 mx-auto flex min-h-[720px] max-w-6xl flex-col items-center justify-center px-5 pb-24 pt-32 text-center">
         <h2 className="display-title text-[clamp(2.4rem,6vw,5.2rem)] text-display-green text-glow">
-          Toute la Coupe
-          <br />
-          du Monde couverte
+          {t.title}
         </h2>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-5 opacity-90">
@@ -54,7 +59,7 @@ export function MatchShowcase({
         <div className="mt-12 flex items-center justify-center gap-4">
           <TeamBlock team={home} />
           <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs font-bold uppercase text-white/55">
-            Démo modèle
+            {t.demo}
           </span>
           <TeamBlock team={away} />
         </div>
@@ -64,14 +69,13 @@ export function MatchShowcase({
         </h3>
 
         <p className="mx-auto mt-6 max-w-2xl text-base font-medium text-white/80 sm:text-lg">
-          Notre modèle croise plus de 210 sources de données en temps réel pour prédire l&apos;issue
-          de chaque match.
+          {t.subtitle}
         </p>
 
         <div className="mt-9 grid w-full max-w-3xl grid-cols-3 gap-4">
-          <Stat value={f(outcome.home)} label={`Victoire ${home.name}`} tone="home" />
-          <Stat value={f(outcome.draw)} label="Match nul" tone="draw" />
-          <Stat value={f(outcome.away)} label={`Victoire ${away.name}`} tone="away" />
+          <Stat value={outcome.home} label={win(home.name)} tone="home" />
+          <Stat value={outcome.draw} label={t.draw} tone="draw" />
+          <Stat value={outcome.away} label={win(away.name)} tone="away" />
         </div>
 
         <Link
@@ -79,12 +83,10 @@ export function MatchShowcase({
           className="mt-10 inline-flex h-14 items-center gap-3 rounded-full bg-primary px-8 text-base font-extrabold uppercase text-primary-foreground shadow-[0_16px_50px_-12px_hsl(var(--primary)/0.6)] transition hover:opacity-95"
         >
           <CheckCircle2 className="h-5 w-5" />
-          Analyse prête
+          {t.cta}
         </Link>
 
-        <p className="mt-6 max-w-sm text-sm font-medium text-brand-soft">
-          Lance l&apos;analyse dans l&apos;app pour obtenir tous les détails du match.
-        </p>
+        <p className="mt-6 max-w-sm text-sm font-medium text-brand-soft">{t.footnote}</p>
       </div>
     </section>
   );
@@ -125,12 +127,22 @@ function TeamBlock({ team }: { team: TeamRef }) {
   );
 }
 
-function Stat({ value, label, tone }: { value: string; label: string; tone: "home" | "draw" | "away" }) {
+function Stat({
+  value,
+  label,
+  tone,
+}: {
+  value: number;
+  label: string;
+  tone: "home" | "draw" | "away";
+}) {
+  const pct = value * 100;
+  const decimals = pct >= 9.95 ? 0 : 1;
   const color = tone === "away" ? "text-gold" : tone === "draw" ? "text-white" : "text-primary";
   return (
     <div>
       <div className={`text-4xl font-extrabold sm:text-6xl ${color}`}>
-        {value}
+        <CountUp end={pct} decimals={decimals} duration={1600} />
         <span className="text-2xl sm:text-3xl">%</span>
       </div>
       <div className="mt-2 truncate text-sm font-semibold text-white/80">{label}</div>
