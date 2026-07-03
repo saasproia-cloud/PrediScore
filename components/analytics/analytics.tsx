@@ -1,14 +1,15 @@
 import Script from "next/script";
 import { CLARITY_ID } from "@/lib/constants/config";
 
-// Mesure d'audience : Microsoft Clarity (heatmaps + enregistrements de sessions).
+// Microsoft Clarity — heatmaps + enregistrements de sessions.
 //
-// Règle clé : on ne charge le tracker QU'EN PRODUCTION. En local (npm run dev)
-// rien ne part — sinon Clarity enregistrerait des sessions « localhost » inutiles
-// et tes propres tests fausseraient les données.
+// Installé via next/script (l'équivalent Next.js de « coller le snippet dans le
+// <head> » : le tag est injecté proprement sur toutes les pages).
+// `strategy="afterInteractive"` = chargé APRÈS l'affichage → le site reste rapide.
 //
-// `strategy="afterInteractive"` = le script se charge APRÈS l'affichage de la
-// page. L'analytics ne passe jamais avant ton contenu : le site reste rapide.
+// On ne charge le tracker QU'EN PRODUCTION : en local (npm run dev) rien ne part,
+// sinon Clarity enregistrerait des sessions « localhost » qui fausseraient tes
+// données. Sur prediscore.io (production) il se charge normalement.
 
 const isProd = process.env.NODE_ENV === "production";
 
