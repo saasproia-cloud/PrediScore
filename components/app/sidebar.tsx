@@ -259,12 +259,13 @@ export function MobileNav() {
   const isActive = (href: string) =>
     href === "/app" ? pathname === "/app" : pathname.startsWith(href);
   const items = NAV.filter((item) =>
-    ["/app", "/app/competitions", "/app/coach", "/app/subscription", "/app/settings"].includes(item.href),
+    ["/app", "/app/competitions", "/app/coach", "/app/history", "/app/subscription", "/app/settings"].includes(item.href),
   );
   const mobileLabels: Record<string, string> = {
     "/app": "Matchs",
     "/app/competitions": "Ligues",
     "/app/coach": "Coach",
+    "/app/history": "Historique",
     "/app/subscription": "Plan",
     "/app/settings": "Réglages",
   };
@@ -273,7 +274,7 @@ export function MobileNav() {
   }, [pathname]);
 
   return (
-    <nav className="fixed inset-x-3 bottom-[calc(0.7rem+env(safe-area-inset-bottom))] z-40 grid grid-cols-5 rounded-2xl border border-white/[0.12] bg-[hsl(var(--background)/0.88)] p-1.5 shadow-[0_20px_70px_rgb(0_0_0/0.38)] backdrop-blur-2xl lg:hidden">
+    <nav className="fixed inset-x-3 bottom-[calc(0.7rem+env(safe-area-inset-bottom))] z-40 grid grid-cols-6 rounded-2xl border border-white/[0.12] bg-[hsl(var(--background)/0.88)] p-1.5 shadow-[0_20px_70px_rgb(0_0_0/0.38)] backdrop-blur-2xl lg:hidden">
       <RouteProgress show={Boolean(pendingHref)} />
       {items.map((item) => {
         const Icon = item.icon;
