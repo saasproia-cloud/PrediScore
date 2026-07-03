@@ -16,6 +16,7 @@ import {
   Unlock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { worldCupFavorites } from "@/lib/football/world-cup";
 
 type View = "groups" | "bracket";
 
@@ -82,20 +83,12 @@ export function WorldCupView({ entitled = false }: { entitled?: boolean }) {
       </section>
 
       {entitled ? (
-        <section className="rounded-lg border border-primary/30 bg-primary/[0.06] p-4 text-center sm:p-6">
-          <Unlock className="mx-auto mb-3 h-6 w-6 text-primary" />
-          <p className="text-sm text-foreground">
-            Accès premium actif : analyse chaque match de la Coupe du Monde sans limite.
-          </p>
-          <Link href="/app" className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-gradient px-6 text-sm font-extrabold text-primary-foreground transition hover:scale-[1.01]">
-            <Sparkles className="h-4 w-4" /> Analyser un match
-          </Link>
-        </section>
+        <Favorites />
       ) : (
         <section className="app-panel-muted rounded-lg p-4 text-center sm:p-6">
           <Lock className="mx-auto mb-3 h-6 w-6 text-primary" />
           <p className="text-sm text-muted-foreground">
-            Le top 3 des favoris, les scénarios de parcours et les probabilités de qualification sont réservés aux membres premium.
+            Le classement des favoris au titre, les scénarios de parcours et les probabilités de qualification sont réservés aux membres premium.
           </p>
           <Link href="/app/subscription" className="mt-5 inline-flex h-10 items-center justify-center rounded-lg bg-brand-gradient px-6 text-sm font-extrabold text-primary-foreground transition hover:scale-[1.01]">
             Passer Premium
@@ -119,6 +112,47 @@ export function WorldCupView({ entitled = false }: { entitled?: boolean }) {
         <Sparkles className="h-4 w-4" /> Analyser un match
       </Link>
     </div>
+  );
+}
+
+function Favorites() {
+  const favorites = worldCupFavorites(8);
+  const max = favorites[0]?.prob ?? 1;
+
+  return (
+    <section className="rounded-lg border border-gold/25 bg-[radial-gradient(circle_at_90%_0%,hsl(var(--gold)/0.1),transparent_40%),hsl(0_0%_8%/0.6)] p-4 sm:p-6">
+      <div className="mb-1 flex items-center gap-2">
+        <Unlock className="h-4 w-4 text-primary" />
+        <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">Accès premium actif</span>
+      </div>
+      <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl">Favoris au titre</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Probabilité de sacre estimée par le modèle (force des sélections, forme récente).
+      </p>
+
+      <div className="mt-5 space-y-2.5">
+        {favorites.map((team, index) => (
+          <div key={team.name} className="flex items-center gap-3">
+            <span className="w-5 shrink-0 text-right text-xs font-bold tabular-nums text-muted-foreground">{index + 1}</span>
+            <span className="text-lg">{team.flag}</span>
+            <span className="w-28 shrink-0 truncate text-sm font-semibold sm:w-36">{team.name}</span>
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-gold"
+                style={{ width: `${Math.max(6, (team.prob / max) * 100)}%` }}
+              />
+            </div>
+            <span className="w-12 shrink-0 text-right text-sm font-bold tabular-nums text-gold">
+              {(team.prob * 100).toFixed(1)}%
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <Link href="/app" className="mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-gradient px-6 text-sm font-extrabold text-primary-foreground transition hover:scale-[1.01]">
+        <Sparkles className="h-4 w-4" /> Analyser un match de la CDM
+      </Link>
+    </section>
   );
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { chatText, type ChatTurn } from "@/lib/ai/openai-client";
+import { worldCupFavorites } from "@/lib/football/world-cup";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { loadEntitlement, type Entitlement } from "@/lib/data/entitlement";
 import { coachLimitFor, consumeDailyUsage } from "@/lib/data/usage";
@@ -29,10 +30,24 @@ const Body = z.object({
     .max(16),
 });
 
-const SYSTEM = `Tu es le Coach IA de ${SITE_NAME}, un analyste football expert.
+const TODAY = new Date().toLocaleDateString("fr-FR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const SYSTEM = `Tu es le Coach IA de ${SITE_NAME}, un analyste football expert. Nous sommes le ${TODAY}.
 Tu réponds aux questions sur les matchs, les équipes, les joueurs et les pronostics.
 Méthodo ${SITE_NAME} : modèle statistique (Dixon-Coles), forme récente, performances domicile/extérieur, cotes du marché.
-RÈGLES :
+
+RÈGLES ANTI-INFOS PÉRIMÉES (PRIORITAIRES) :
+- Ta connaissance des effectifs peut être DÉPASSÉE. Beaucoup de joueurs ont pris leur retraite, changé de club ou de statut depuis ton entraînement.
+- N'affirme JAMAIS qu'un joueur précis est actuellement dans un club/une sélection, titulaire, capitaine, blessé, ou sur la feuille de match — SAUF si l'utilisateur te le dit lui-même.
+- Ne cite pas un joueur comme "buteur probable", "star", "meneur" ou "cadre" si tu n'es pas certain qu'il y joue ENCORE aujourd'hui. Dans le doute, ne le nomme pas.
+- Raisonne au niveau de l'ÉQUIPE (forme, style, domicile/extérieur, dynamique, historique) plutôt que sur des noms de joueurs incertains.
+- Si on te demande un joueur précis, réponds prudemment et précise que son statut actuel est à vérifier sur la feuille de match.
+
+RÈGLES GÉNÉRALES :
 - Français, concis, clair, expert. Va droit au but.
 - Réponds uniquement aux sujets football : matchs, équipes, joueurs, buteurs, tactique, forme, compétitions, cotes/probabilités.
 - Si la question sort du football, refuse brièvement et propose de poser une question foot.
@@ -191,19 +206,27 @@ function impossibleMatchReply(): string {
 }
 
 function worldCupWinnerReply(): string {
+  const top = worldCupFavorites(5);
+  const winner = top[0];
+  const gauge = (prob: number, best: number) => {
+    const filled = Math.max(1, Math.round((prob / best) * 10));
+    return `[${"#".repeat(filled)}${"-".repeat(10 - filled)}]`;
+  };
+  const best = winner?.prob ?? 1;
+  const lines = top.map(
+    (t) => `${t.flag} ${t.name.padEnd(14)} ${gauge(t.prob, best)} ${(t.prob * 100).toFixed(1)}%`,
+  );
   return [
-    "Je tranche : France.",
+    `Je tranche : ${winner ? `${winner.flag} ${winner.name}` : "France"}.`,
     "",
-    "Lecture rapide : profondeur d'effectif, expérience des grands matchs, densité offensive et capacité à gérer les phases à élimination directe.",
+    "Lecture rapide : force globale de la sélection, profondeur d'effectif, expérience des grands matchs et capacité à gérer les phases à élimination directe.",
     "",
-    "Jauge modèle",
-    "France      [#######---] 7/10",
-    "Angleterre  [######----] 6/10",
-    "Brésil      [######----] 6/10",
+    "Favoris au titre (modèle PrediScore)",
+    ...lines,
     "",
-    "Point de risque : la Coupe du monde reste très sensible au tirage, aux blessures et aux cartons.",
+    "Point de risque : la Coupe du monde reste très sensible au tirage, aux blessures et aux détails d'un match couperet.",
     "",
-    "Verdict : France gagnante, avec confiance prudente.",
+    `Verdict : ${winner ? winner.name : "France"} favori n°1, avec confiance prudente.`,
   ].join("\n");
 }
 
