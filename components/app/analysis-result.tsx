@@ -264,55 +264,110 @@ function FreeTeaser({ data }: { data: AnalyzeResponse }) {
         <TeamFormCard stats={a} />
       </div>
 
-      <Paywall />
+      <PremiumLock home={teams.home} away={teams.away} />
 
     </div>
   );
 }
 
-// Paywall clair : carte de valeur + CTA, sans faux flou de données côté client.
-function Paywall() {
+// Aperçu premium « sous verre » : on montre une maquette FLOUTÉE de l'analyse
+// complète (données décoratives, aucune vraie proba envoyée au client → gating
+// réel) surmontée d'un dégradé et du CTA. But : donner envie de débloquer.
+function PremiumLock({ home, away, percent = 15 }: { home: TeamRef; away: TeamRef; percent?: number }) {
   const items = [
-    "Le vainqueur probable + les probabilités exactes (1-N-2)",
-    "Le score le plus probable & la grille complète des scores",
-    "Le scénario du match rédigé par l'IA",
-    "15+ marchés : +/- buts, BTTS, double chance, clean sheet…",
-    "Le niveau de confiance détaillé de l'analyse",
+    "Vainqueur probable + probabilités exactes (1-N-2)",
+    "Score le plus probable & grille complète des scores",
+    "Scénario du match rédigé par l'IA",
+    "15+ marchés : +/- buts, BTTS, double chance…",
   ];
+  // Valeurs 100% décoratives (jamais les vraies) — illisibles sous le flou.
+  const fakeProb = [
+    { label: "1", team: home, v: 58 },
+    { label: "N", team: null as TeamRef | null, v: 22 },
+    { label: "2", team: away, v: 20 },
+  ];
+  const fakeScores = ["2–1", "1–1", "2–0", "1–0", "3–1"];
+
   return (
-    <div className="relative overflow-hidden rounded-lg border border-primary/30 bg-[radial-gradient(circle_at_12%_10%,hsl(var(--primary)/0.2),transparent_36%),radial-gradient(circle_at_88%_18%,hsl(var(--gold)/0.16),transparent_36%),linear-gradient(135deg,rgba(8,8,8,0.96),rgba(10,24,18,0.9)_52%,rgba(34,27,6,0.5))] p-4 shadow-[0_24px_80px_-16px_rgba(0,0,0,0.7)] sm:p-6">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 left-10 h-56 w-56 rounded-full bg-primary/[0.16] blur-3xl" />
-      <div className="relative">
-        <div className="mb-3 flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.12] text-emerald-200 ring-1 ring-white/20">
-            <Lock className="h-4 w-4" />
-          </span>
-          <div>
-            <h3 className="text-lg font-extrabold">Débloque le verdict complet</h3>
-            <p className="text-xs text-white/[0.62]">Score probable, marchés clés, scénario IA et confiance du modèle.</p>
-          </div>
-        </div>
-        <ul className="mb-5 space-y-2">
-          {items.map((it) => (
-            <li key={it} className="flex items-start gap-2 text-sm text-foreground/[0.85]">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
-              {it}
-            </li>
+    <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-black/40">
+      {/* ---- Maquette floutée (décorative, non lisible, non interactive) ---- */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 select-none space-y-3 overflow-hidden p-3.5 blur-[7px] sm:space-y-4 sm:p-5">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Probabilités exactes</div>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          {fakeProb.map((x) => (
+            <div key={x.label} className="rounded-lg border border-white/10 bg-background/45 p-3">
+              <div className="mb-2 flex items-center gap-2">
+                {x.team ? <Logo team={x.team} size={26} /> : <div className="h-[26px] w-[26px] rounded-full bg-gold/15" />}
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{x.label}</span>
+              </div>
+              <div className="text-2xl font-black text-brand-soft sm:text-3xl">{x.v}%</div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-brand-gradient" style={{ width: `${x.v}%` }} />
+              </div>
+            </div>
           ))}
-          <li className="flex items-start gap-2 text-sm font-medium text-foreground">
-            <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-gold-soft" />
-            Coach IA : pose tes questions sur le match (Pro & À vie)
-          </li>
-        </ul>
-        <div className="flex flex-col items-center gap-3 sm:flex-row">
+        </div>
+        <div className="grid grid-cols-6 gap-1">
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-7 rounded"
+              style={{ backgroundColor: `hsl(var(--primary) / ${0.05 + ((i * 37) % 60) / 100 * 0.7})` }}
+            />
+          ))}
+        </div>
+        <div className="space-y-2">
+          {fakeScores.map((s, i) => (
+            <div key={s} className="flex items-center gap-2">
+              <span className="w-10 text-sm font-medium">{s}</span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary" style={{ width: `${90 - i * 15}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ---- Voile dégradé au-dessus du flou ---- */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,hsl(var(--background)/0.2),hsl(var(--background)/0.86)_52%,hsl(var(--background))_94%)]"
+      />
+
+      {/* ---- Carte CTA (en flux : définit la hauteur → zéro débordement mobile) ---- */}
+      <div className="relative flex justify-center px-3.5 pb-3.5 pt-20 sm:px-6 sm:pb-6 sm:pt-28">
+        <div className="w-full max-w-md rounded-2xl border border-primary/30 bg-[radial-gradient(circle_at_15%_0%,hsl(var(--primary)/0.18),transparent_42%),radial-gradient(circle_at_90%_10%,hsl(var(--gold)/0.14),transparent_40%),hsl(0_0%_6%/0.96)] p-4 text-center shadow-[0_24px_80px_-16px_rgba(0,0,0,0.8)] sm:p-6">
+          <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.1] text-gold ring-1 ring-white/15">
+            <Lock className="h-5 w-5" />
+          </span>
+          <h3 className="text-xl font-extrabold leading-tight sm:text-2xl">
+            Tu n&apos;as accès qu&apos;à <span className="text-gold">{percent}%</span> de l&apos;analyse
+          </h3>
+          <div className="mx-auto mt-3 h-2 max-w-[220px] overflow-hidden rounded-full bg-white/10">
+            <div className="h-full rounded-full bg-brand-gradient" style={{ width: `${percent}%` }} />
+          </div>
+          <p className="mx-auto mt-3 max-w-sm text-sm text-white/70">
+            L&apos;analyse complète contient les probabilités exactes, le score, les scénarios et les marchés premium.
+          </p>
+          <ul className="mx-auto mt-4 grid max-w-sm gap-1.5 text-left">
+            {items.map((it) => (
+              <li key={it} className="flex items-start gap-2 text-[13px] text-foreground/85">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                {it}
+              </li>
+            ))}
+            <li className="flex items-start gap-2 text-[13px] font-medium text-foreground">
+              <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-gold-soft" />
+              Coach IA pour poser tes questions (Pro &amp; À vie)
+            </li>
+          </ul>
           <Link
             href="/app/subscription"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-brand-gradient font-extrabold text-primary-foreground shadow-[0_16px_40px_hsl(var(--primary)/0.24)] transition hover:scale-[1.01] sm:w-auto sm:px-7"
+            className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gold-cta text-base font-extrabold text-gold-foreground shadow-[0_16px_44px_-10px_hsl(var(--gold)/0.55)] transition hover:opacity-95 active:scale-[0.99]"
           >
-            Débloquer — à partir de 10€
+            <Sparkles className="h-5 w-5" /> Débloquer l&apos;analyse complète
           </Link>
-          <span className="text-xs text-white/[0.62]">Accès immédiat après paiement</span>
+          <p className="mt-2.5 text-xs text-white/55">À partir de 10€ · accès immédiat après paiement</p>
         </div>
       </div>
     </div>
